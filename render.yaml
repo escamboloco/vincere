@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: in-dependencia
+    runtime: static
+    staticPublishPath: .
+    buildCommand: ""

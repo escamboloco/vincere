@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Entrar{% endblock %}
+{% block conteudo %}
+<span class="kicker">comunidade</span>
+<h1>Entrar na sua conta</h1>
+<form class="form" method="post">
+ <div class="campo"><label for="email">E-mail</label><input id="email" type="email" name="email" required></div>
+ <div class="campo"><label for="senha">Senha</label><input id="senha" type="password" name="senha" required></div>
+ <button class="bt bt--luz" type="submit">Entrar</button>
+</form>
+<p class="sub" style="margin-top:18px">Ainda não tem conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a></p>
+{% endblock %}

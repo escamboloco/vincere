@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}{{ cat['nome'] }}{% endblock %}
+{% block conteudo %}
+<span class="kicker"><a href="{{ url_for('comunidade_home') }}">comunidade</a> / {{ cat['nome'] }}</span>
+<h1>{{ cat['nome'] }}</h1>
+<p class="sub">{{ cat['descricao'] }}</p>
+<p style="margin-top:20px"><a class="bt bt--luz" href="{{ url_for('novo_topico', slug=cat['slug']) }}">+ Novo tópico</a></p>
+
+<div class="lista-topicos">
+{% for t in topicos %}
+ <div class="topico-linha">
+  <div><h4>{% if t['fixado'] %}<span class="fixado">📌</span> {% endif %}<a href="{{ url_for('topico_view', topico_id=t['id']) }}">{{ t['titulo'] }}</a></h4>
+   <span class="topico-meta">por {{ t['apelido'] }}</span></div>
+  <span class="topico-meta">{{ t['n_posts'] }} resposta(s)</span>
+ </div>
+{% else %}
+ <p class="sub">Nenhum tópico aqui ainda — comece você.</p>
+{% endfor %}
+</div>
+{% endblock %}

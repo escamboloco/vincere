@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Criar conta{% endblock %}
+{% block conteudo %}
+<span class="kicker">comunidade</span>
+<h1>Criar sua conta</h1>
+<p class="sub">Use um apelido — não precisa ser seu nome real. O e-mail fica visível só para você.</p>
+<form class="form" method="post">
+ <div class="linha2">
+  <div class="campo"><label for="apelido">Apelido</label><input id="apelido" name="apelido" value="{{ apelido }}" required></div>
+  <div class="campo"><label for="email">E-mail</label><input id="email" type="email" name="email" value="{{ email }}" required></div>
+ </div>
+ <div class="linha2">
+  <div class="campo"><label for="senha">Senha (mín. 8 caracteres)</label><input id="senha" type="password" name="senha" minlength="8" required></div>
+  <div class="campo"><label for="tipo">Você é</label>
+   <select id="tipo" name="tipo">
+    <option value="paciente" {% if tipo=='paciente' %}selected{% endif %}>Paciente / em recuperação</option>
+    <option value="familiar" {% if tipo=='familiar' %}selected{% endif %}>Familiar / amigo</option>
+   </select></div>
+ </div>
+ <label class="check"><input type="checkbox" name="aceite" required style="width:auto"> Li e concordo com as diretrizes da comunidade: respeito, sem julgamento, sem compartilhar formas ou doses de uso, e entendo que este espaço não substitui atendimento clínico de emergência.</label>
+ <button class="bt bt--luz" type="submit">Criar conta</button>
+</form>
+<p class="sub" style="margin-top:18px">Já tem conta? <a href="{{ url_for('entrar') }}">Entrar</a></p>
+{% endblock %}

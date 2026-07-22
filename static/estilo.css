@@ -1,0 +1,76 @@
+:root{
+ --noite:#101411;--carvao:#171D19;--carvao2:#1F2621;--linha:#242B25;--linha-forte:#333B33;
+ --osso:#EDE8DA;--osso2:#A9A48F;--osso3:#7D7A6B;
+ --luz:#F2C14E;--luz2:#C89322;--brasa:#E0704A;--salvia:#8FBF9A;--zapv:#27A55E;
+ --serif:'Fraunces',serif;--sans:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--noite);color:var(--osso);font-family:var(--sans);line-height:1.65}
+a{color:var(--luz);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:900px;margin:0 auto;padding-inline:24px}
+.topo{border-bottom:1px solid var(--linha);padding-block:18px;position:sticky;top:0;background:rgba(16,20,17,.92);backdrop-filter:blur(8px);z-index:10}
+.topo-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.logo{color:var(--osso)}
+.logo .nome{font-family:var(--serif);font-size:1.2rem}
+.logo em{font-style:italic;color:var(--luz)}
+.logo .sub-l{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--osso2)}
+.nav ul{list-style:none;display:flex;gap:6px;margin:0;padding:0;flex-wrap:wrap}
+.nav a{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--osso2);padding:8px 12px;border-radius:6px}
+.nav a:hover{color:var(--osso);text-decoration:none;background:var(--carvao)}
+.nav a.destaque{background:var(--luz);color:var(--noite);font-weight:600}
+.miolo{padding-block:40px 80px;min-height:60vh}
+h1{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.6rem);margin:0 0 8px}
+h2{font-family:var(--serif);font-size:1.5rem;margin:0 0 12px}
+.kicker{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--luz);margin-bottom:8px;display:block}
+.sub{color:var(--osso2);max-width:60ch}
+.flashes{margin-bottom:24px;display:grid;gap:10px}
+.flash{padding:14px 18px;border-radius:8px;border:1px solid var(--linha-forte);font-size:.92rem}
+.flash-ok{border-color:var(--salvia);color:var(--salvia)}
+.flash-erro{border-color:var(--brasa);color:var(--brasa)}
+.flash-aviso{border-color:var(--luz);color:var(--luz)}
+.flash-crise{border-color:var(--brasa);background:rgba(224,112,74,.12);color:var(--osso)}
+.flash-crise a{color:var(--brasa);font-weight:700}
+.cat-grid{display:grid;gap:1px;background:var(--linha);border:1px solid var(--linha);margin-top:24px}
+.cat-card{background:var(--carvao);padding:22px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.cat-card h3{font-family:var(--serif);font-size:1.25rem;margin:0 0 4px}
+.cat-card p{color:var(--osso2);font-size:.88rem;margin:0}
+.cat-n{font-family:var(--mono);font-size:.7rem;color:var(--osso3);white-space:nowrap}
+.lista-topicos{margin-top:20px;border-top:1px solid var(--linha)}
+.topico-linha{display:flex;justify-content:space-between;gap:16px;padding:16px 4px;border-bottom:1px solid var(--linha);align-items:baseline}
+.topico-linha h4{font-family:var(--sans);font-weight:600;font-size:1rem;margin:0}
+.topico-meta{font-family:var(--mono);font-size:.68rem;color:var(--osso3);white-space:nowrap}
+.fixado{color:var(--luz)}
+.post{border:1px solid var(--linha);background:var(--carvao);padding:20px 22px;border-radius:8px;margin-bottom:14px}
+.post-cab{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.7rem;color:var(--osso3);margin-bottom:10px}
+.post-autor{color:var(--luz)}
+.badge-tipo{font-size:.6rem;border:1px solid var(--linha-forte);border-radius:99px;padding:2px 8px;margin-left:6px}
+.post-corpo{white-space:pre-wrap}
+.post-acoes{margin-top:10px;font-family:var(--mono);font-size:.66rem}
+.post-acoes button{background:none;border:none;color:var(--osso3);cursor:pointer;text-decoration:underline;font:inherit;padding:0}
+form.form{display:grid;gap:14px;margin-top:20px;max-width:620px}
+label{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--osso2)}
+input,select,textarea{background:var(--noite);border:1px solid var(--linha-forte);color:var(--osso);padding:12px 14px;border-radius:6px;font-family:var(--sans);font-size:.96rem;width:100%}
+textarea{min-height:110px;resize:vertical}
+.campo{display:flex;flex-direction:column;gap:6px}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bt{display:inline-block;border:1px solid var(--linha-forte);background:transparent;color:var(--osso);padding:12px 20px;border-radius:6px;font-family:var(--mono);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.bt:hover{border-color:var(--luz);color:var(--luz);text-decoration:none}
+.bt--luz{background:var(--luz);border-color:var(--luz);color:var(--noite);font-weight:600}
+.bt--luz:hover{color:var(--noite);background:#ffd868}
+.bt--mini{padding:8px 14px;font-size:.68rem}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;color:var(--osso2)}
+.diretrizes{border-left:2px solid var(--luz);padding-left:16px;color:var(--osso2);font-size:.88rem;margin:18px 0}
+.painel-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--linha);border:1px solid var(--linha);margin:24px 0}
+.pcard{background:var(--carvao);padding:22px}
+.pcard .pk{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--osso3)}
+.pcard .pv{font-family:var(--serif);font-size:1.8rem;color:var(--luz);margin-top:6px}
+.tabela{width:100%;border-collapse:collapse;margin-top:14px;font-size:.88rem}
+.tabela th,.tabela td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--linha)}
+.tabela th{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--osso3)}
+.pill{font-family:var(--mono);font-size:.64rem;border:1px solid var(--linha-forte);border-radius:99px;padding:3px 10px}
+.pill-crise{border-color:var(--brasa);color:var(--brasa)}
+.secao-admin{margin-top:40px}
+.rodape{border-top:1px solid var(--linha);padding:26px 0;color:var(--osso3);font-size:.82rem}
+.rodape strong{color:var(--osso2)}
+@media (max-width:640px){.linha2,.painel-cards{grid-template-columns:1fr}}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Comunidade{% endblock %} · in-Dependência</title>
+<meta name="robots" content="noindex, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+<header class="topo"><div class="container topo-in">
+ <a class="logo" href="{{ url_for('comunidade_home') }}"><span class="nome"><em>in·</em>Dependência</span><span class="sub-l">comunidade</span></a>
+ <nav class="nav"><ul>
+  <li><a href="{{ url_for('comunidade_home') }}">Fórum</a></li>
+  {% if usuario %}
+   <li><a href="{{ url_for('perfil') }}">Meu painel</a></li>
+   {% if usuario['tipo']=='admin' %}<li><a href="{{ url_for('admin_home') }}">Admin</a></li>{% endif %}
+   <li><a href="{{ url_for('sair') }}">Sair ({{ usuario['apelido'] }})</a></li>
+  {% else %}
+   <li><a href="{{ url_for('entrar') }}">Entrar</a></li>
+   <li><a class="destaque" href="{{ url_for('cadastro') }}">Cadastrar</a></li>
+  {% endif %}
+ </ul></nav>
+</div></header>
+
+<main class="container miolo">
+ {% with mensagens = get_flashed_messages(with_categories=true) %}
+  {% if mensagens %}
+   <div class="flashes">
+   {% for cat, msg in mensagens %}
+    <div class="flash flash-{{ cat }}">{{ msg }}{% if cat=='crise' %} <a href="tel:188">Ligar 188</a>{% endif %}</div>
+   {% endfor %}
+   </div>
+  {% endif %}
+ {% endwith %}
+ {% block conteudo %}{% endblock %}
+</main>
+
+<footer class="rodape"><div class="container">
+ <p>Comunidade de apoio entre pares — não substitui avaliação clínica. Risco à vida: <strong>SAMU 192</strong>. Apoio emocional 24h: <strong>CVV 188</strong>.</p>
+ <p><a href="{{ ('https://wa.me/' ~ num_zap) }}" target="_blank" rel="noopener">Falar com o especialista no WhatsApp →</a></p>
+</div></footer>
+</body>
+</html>

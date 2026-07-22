@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}{{ topico['titulo'] }}{% endblock %}
+{% block conteudo %}
+<span class="kicker"><a href="{{ url_for('categoria_view', slug=topico['cat_slug']) }}">{{ topico['cat_nome'] }}</a> / tópico</span>
+<h1>{{ topico['titulo'] }}</h1>
+<p class="sub">iniciado por {{ topico['apelido'] }}</p>
+
+<div style="margin-top:28px">
+{% for p in posts %}
+ {% if not p['removido'] %}
+ <div class="post">
+  <div class="post-cab">
+   <span><span class="post-autor">{{ p['apelido'] }}</span>{% if p['autor_tipo']=='familiar' %}<span class="badge-tipo">familiar</span>{% endif %}{% if p['autor_tipo']=='admin' %}<span class="badge-tipo" style="border-color:var(--luz);color:var(--luz)">equipe</span>{% endif %}</span>
+   <span>{{ p['criado_em'][:16] }}</span>
+  </div>
+  <div class="post-corpo">{{ p['corpo'] }}</div>
+  {% if usuario %}
+  <div class="post-acoes">
+   <form method="post" action="{{ url_for('denunciar', post_id=p['id']) }}" style="display:inline">
+    <button type="submit" onclick="return confirm('Denunciar esta mensagem para revisão da equipe?')">denunciar</button>
+   </form>
+  </div>
+  {% endif %}
+ </div>
+ {% else %}
+ <div class="post" style="opacity:.5"><div class="post-corpo"><em>mensagem removida pela moderação</em></div></div>
+ {% endif %}
+{% endfor %}
+</div>
+
+{% if usuario %}
+<h2 style="margin-top:36px">Responder</h2>
+<form class="form" method="post">
+ <div class="campo"><textarea name="corpo" placeholder="Escreva sua resposta com respeito e cuidado…" required></textarea></div>
+ <button class="bt bt--luz" type="submit">Enviar resposta</button>
+</form>
+{% else %}
+<p class="sub" style="margin-top:30px"><a href="{{ url_for('entrar', proximo=request.path) }}">Entre na sua conta</a> para responder a este tópico.</p>
+{% endif %}
+{% endblock %}

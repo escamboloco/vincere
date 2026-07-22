@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Fórum{% endblock %}
+{% block conteudo %}
+<span class="kicker">comunidade</span>
+<h1>Um espaço para não atravessar isso sozinho</h1>
+<p class="sub">Pacientes e familiares trocando experiência real — com moderação da equipe. Ler não exige cadastro; para postar, crie uma conta gratuita.</p>
+
+<div class="cat-grid">
+{% for c in categorias %}
+ <a class="cat-card" href="{{ url_for('categoria_view', slug=c['slug']) }}" style="color:inherit;text-decoration:none">
+  <div><h3>{{ c['nome'] }}</h3><p>{{ c['descricao'] }}</p></div>
+  <span class="cat-n">{{ contagens.get(c['id'], 0) }} tópicos</span>
+ </a>
+{% endfor %}
+</div>
+
+<h2 style="margin-top:44px">Últimas conversas</h2>
+<div class="lista-topicos">
+{% for t in recentes %}
+ <div class="topico-linha">
+  <div><h4><a href="{{ url_for('topico_view', topico_id=t['id']) }}">{{ t['titulo'] }}</a></h4>
+   <span class="topico-meta">{{ t['cat_nome'] }} · por {{ t['apelido'] }}</span></div>
+  <span class="topico-meta">{{ t['n_posts'] }} resposta(s)</span>
+ </div>
+{% else %}
+ <p class="sub">Ainda não há tópicos — seja a primeira pessoa a começar uma conversa.</p>
+{% endfor %}
+</div>
+{% endblock %}

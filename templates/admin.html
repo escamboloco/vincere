@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block titulo %}Admin{% endblock %}
+{% block conteudo %}
+<span class="kicker">área restrita</span>
+<h1>Painel de moderação</h1>
+
+<div class="painel-cards" style="grid-template-columns:repeat(3,1fr)">
+ <div class="pcard"><span class="pk">usuários</span><p class="pv">{{ totais['n_usuarios'] }}</p></div>
+ <div class="pcard"><span class="pk">tópicos</span><p class="pv">{{ totais['n_topicos'] }}</p></div>
+ <div class="pcard"><span class="pk">mensagens ativas</span><p class="pv">{{ totais['n_posts'] }}</p></div>
+</div>
+
+{% if crise %}
+<div class="secao-admin">
+ <h2><span class="pill pill-crise">prioridade</span> Mensagens sinalizadas por risco</h2>
+ <p class="sub">Detecção automática por palavras-chave — sempre revisar com sensibilidade humana antes de agir.</p>
+ {% for p in crise %}
+  <div class="post">
+   <div class="post-cab"><span class="post-autor">{{ p['apelido'] }}</span><span>{{ p['criado_em'][:16] }}</span></div>
+   <div class="post-corpo">{{ p['corpo'] }}</div>
+   <div class="post-acoes">
+    <a href="{{ url_for('topico_view', topico_id=p['topico_id']) }}">ver tópico</a> ·
+    <form method="post" action="{{ url_for('admin_remover_post', post_id=p['id']) }}" style="display:inline"><button type="submit">remover</button></form>
+   </div>
+  </div>
+ {% endfor %}
+</div>
+{% endif %}
+
+<div class="secao-admin">
+ <h2>Denúncias pendentes</h2>
+ {% for d in denuncias %}
+  <div class="post">
+   <div class="post-cab"><span>denunciado por {{ d['quem_denunciou'] }} · autor: <span class="post-autor">{{ d['autor_post'] }}</span>{% if d['sinalizado_crise'] %} <span class="pill pill-crise">risco</span>{% endif %}</span><span>{{ d['criado_em'][:16] }}</span></div>
+   {% if d['motivo'] %}<p class="sub">motivo: {{ d['motivo'] }}</p>{% endif %}
+   <div class="post-corpo">{{ d['post_corpo'] }}</div>
+   <div class="post-acoes">
+    <a href="{{ url_for('topico_view', topico_id=d['topico_id']) }}">ver tópico</a> ·
+    <form method="post" action="{{ url_for('admin_remover_post', post_id=d['post_id']) }}" style="display:inline"><button type="submit">remover mensagem</button></form> ·
+    <form method="post" action="{{ url_for('admin_dispensar_denuncia', den_id=d['id']) }}" style="display:inline"><button type="submit">dispensar denúncia</button></form>
+   </div>
+  </div>
+ {% else %}
+  <p class="sub">Nenhuma denúncia pendente.</p>
+ {% endfor %}
+</div>
+
+<div class="secao-admin">
+ <h2>Usuários recentes</h2>
+ <table class="tabela">
+  <tr><th>apelido</th><th>tipo</th><th>desde</th><th>status</th><th></th></tr>
+  {% for u in usuarios %}
+  <tr>
+   <td>{{ u['apelido'] }}</td><td>{{ u['tipo'] }}</td><td>{{ u['criado_em'][:10] }}</td>
+   <td>{{ 'banido' if u['banido'] else 'ativo' }}</td>
+   <td>{% if u['tipo']!='admin' %}<form method="post" action="{{ url_for('admin_banir', uid=u['id']) }}"><button class="bt bt--mini" type="submit">{{ 'desbanir' if u['banido'] else 'banir' }}</button></form>{% endif %}</td>
+  </tr>
+  {% endfor %}
+ </table>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block titulo %}Meu painel{% endblock %}
+{% block conteudo %}
+<span class="kicker">minha jornada</span>
+<h1>Olá, {{ u['apelido'] }}</h1>
+
+<div class="painel-cards">
+ <div class="pcard"><span class="pk">dias limpos</span><p class="pv">{{ dias if dias is not none else '—' }}</p></div>
+ <div class="pcard"><span class="pk">economia estimada</span><p class="pv">{{ 'R$ %.0f'|format(economia) if economia is not none else '—' }}</p></div>
+</div>
+
+<form class="form" method="post">
+ <div class="linha2">
+  <div class="campo"><label for="sobrio_desde">Limpo(a) desde</label><input id="sobrio_desde" type="date" name="sobrio_desde" value="{{ u['sobrio_desde'] or '' }}"></div>
+  <div class="campo"><label for="gasto_semanal">Gasto semanal que o uso custava (R$)</label><input id="gasto_semanal" type="number" min="0" step="10" name="gasto_semanal" value="{{ u['gasto_semanal'] or '' }}"></div>
+ </div>
+ <button class="bt bt--luz" type="submit">Salvar</button>
+</form>
+
+<h2 style="margin-top:40px">Meus tópicos recentes</h2>
+<div class="lista-topicos">
+{% for t in meus_topicos %}
+ <div class="topico-linha"><h4><a href="{{ url_for('topico_view', topico_id=t['id']) }}">{{ t['titulo'] }}</a></h4><span class="topico-meta">{{ t['cat_nome'] }}</span></div>
+{% else %}
+ <p class="sub">Você ainda não iniciou nenhum tópico.</p>
+{% endfor %}
+</div>
+
+<details style="margin-top:44px">
+ <summary style="cursor:pointer;color:var(--osso3);font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase">excluir minha conta e meus dados</summary>
+ <form method="post" action="{{ url_for('excluir_conta') }}" style="margin-top:14px" onsubmit="return confirm('Isso apaga sua conta e seus dados pessoais permanentemente. Confirmar?')">
+  <button class="bt" type="submit">Excluir minha conta permanentemente</button>
+ </form>
+</details>
+{% endblock %}

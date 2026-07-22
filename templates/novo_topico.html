@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Novo tópico{% endblock %}
+{% block conteudo %}
+<span class="kicker"><a href="{{ url_for('categoria_view', slug=cat['slug']) }}">{{ cat['nome'] }}</a> / novo tópico</span>
+<h1>Começar uma conversa</h1>
+<div class="diretrizes">Sem julgamento, sem conselho médico não solicitado, sem compartilhar formas de uso ou doses. Se for uma emergência agora, ligue 188 (CVV) ou 192 (SAMU) — o fórum não é atendimento de urgência.</div>
+<form class="form" method="post">
+ <div class="campo"><label for="titulo">Título</label><input id="titulo" name="titulo" maxlength="140" value="{{ titulo }}" required></div>
+ <div class="campo"><label for="corpo">Sua mensagem</label><textarea id="corpo" name="corpo" required>{{ corpo }}</textarea></div>
+ <button class="bt bt--luz" type="submit">Publicar tópico</button>
+</form>
+{% endblock %}
