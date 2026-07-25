@@ -13,7 +13,7 @@ import os, re, sqlite3, unicodedata, time
 from datetime import datetime, date
 from functools import wraps
 from flask import (Flask, g, request, session, redirect, url_for,
-                    render_template, flash, abort)
+                    render_template, flash, abort, send_from_directory)
 from werkzeug.security import generate_password_hash, check_password_hash
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -240,8 +240,8 @@ def excluir_conta():
     return redirect(url_for("comunidade_home"))
 
 # --------------------------------------------------------------- fórum
-@app.route("/")
 @app.route("/comunidade")
+@app.route("/comunidade/")
 def comunidade_home():
     db = get_db()
     categorias = db.execute("SELECT * FROM categorias ORDER BY ordem").fetchall()
@@ -253,6 +253,41 @@ def comunidade_home():
         "FROM topicos t JOIN categorias c ON c.id=t.categoria_id JOIN usuarios u ON u.id=t.usuario_id "
         "ORDER BY t.criado_em DESC LIMIT 12").fetchall()
     return render_template("home.html", categorias=categorias, contagens=contagens, recentes=recentes)
+
+@app.route("/comunidade/topico/<int:topico_id>", methods=["GET", "POST"])
+def topico_view(topico_id):
+    db = get_db()
+    topico = db.execute(
+        "SELECT t.*, u.apelido, c.nome AS cat_nome, c.slug AS cat_slug "
+        "FROM topicos t JOIN usuarios u ON u.id=t.usuario_id JOIN categorias c ON c.id=t.categoria_id "
+        "WHERE t.id=?", (topico_id,)).fetchone()
+    if not topico:
+        abort(404)
+    if request.method == "POST":
+        u = usuario_atual()
+        if u is None:
+            flash("Entre na sua conta para responder.", "aviso")
+            return redirect(url_for("entrar", proximo=request.path))
+        corpo = request.form.get("corpo", "").strip()[:4000]
+        if len(corpo) < 3:
+            flash("Escreva uma resposta um pouco maior.", "erro")
+        elif not pode_postar(u["id"]):
+            flash("Você acabou de postar — aguarde alguns segundos antes de tentar de novo.", "erro")
+        else:
+            agora = datetime.utcnow().isoformat()
+            crise = contem_sinal_de_crise(corpo)
+            db.execute("INSERT INTO posts(topico_id,usuario_id,corpo,criado_em,sinalizado_crise) VALUES (?,?,?,?,?)",
+                       (topico_id, u["id"], corpo, agora, int(crise)))
+            db.commit()
+            if crise:
+                flash("Percebemos que você pode estar passando por um momento muito difícil. "
+                      "Se for uma emergência, ligue 188 (CVV, 24h, gratuito) ou 192 (SAMU). "
+                      "Sua mensagem foi publicada e também sinalizada para nossa equipe.", "crise")
+        return redirect(url_for("topico_view", topico_id=topico_id))
+    posts = db.execute(
+        "SELECT p.*, u.apelido, u.tipo AS autor_tipo FROM posts p JOIN usuarios u ON u.id=p.usuario_id "
+        "WHERE p.topico_id=? ORDER BY p.criado_em ASC", (topico_id,)).fetchall()
+    return render_template("topico.html", topico=topico, posts=posts)
 
 @app.route("/comunidade/<slug>")
 def categoria_view(slug):
@@ -297,41 +332,6 @@ def novo_topico(slug):
                   "Sua mensagem foi publicada e também sinalizada para nossa equipe.", "crise")
         return redirect(url_for("topico_view", topico_id=topico_id))
     return render_template("novo_topico.html", cat=cat, titulo="", corpo="")
-
-@app.route("/comunidade/topico/<int:topico_id>", methods=["GET", "POST"])
-def topico_view(topico_id):
-    db = get_db()
-    topico = db.execute(
-        "SELECT t.*, u.apelido, c.nome AS cat_nome, c.slug AS cat_slug "
-        "FROM topicos t JOIN usuarios u ON u.id=t.usuario_id JOIN categorias c ON c.id=t.categoria_id "
-        "WHERE t.id=?", (topico_id,)).fetchone()
-    if not topico:
-        abort(404)
-    if request.method == "POST":
-        u = usuario_atual()
-        if u is None:
-            flash("Entre na sua conta para responder.", "aviso")
-            return redirect(url_for("entrar", proximo=request.path))
-        corpo = request.form.get("corpo", "").strip()[:4000]
-        if len(corpo) < 3:
-            flash("Escreva uma resposta um pouco maior.", "erro")
-        elif not pode_postar(u["id"]):
-            flash("Você acabou de postar — aguarde alguns segundos antes de tentar de novo.", "erro")
-        else:
-            agora = datetime.utcnow().isoformat()
-            crise = contem_sinal_de_crise(corpo)
-            db.execute("INSERT INTO posts(topico_id,usuario_id,corpo,criado_em,sinalizado_crise) VALUES (?,?,?,?,?)",
-                       (topico_id, u["id"], corpo, agora, int(crise)))
-            db.commit()
-            if crise:
-                flash("Percebemos que você pode estar passando por um momento muito difícil. "
-                      "Se for uma emergência, ligue 188 (CVV, 24h, gratuito) ou 192 (SAMU). "
-                      "Sua mensagem foi publicada e também sinalizada para nossa equipe.", "crise")
-        return redirect(url_for("topico_view", topico_id=topico_id))
-    posts = db.execute(
-        "SELECT p.*, u.apelido, u.tipo AS autor_tipo FROM posts p JOIN usuarios u ON u.id=p.usuario_id "
-        "WHERE p.topico_id=? ORDER BY p.criado_em ASC", (topico_id,)).fetchall()
-    return render_template("topico.html", topico=topico, posts=posts)
 
 @app.route("/comunidade/post/<int:post_id>/denunciar", methods=["POST"])
 @login_obrigatorio
@@ -396,6 +396,48 @@ def admin_banir(uid):
     db.commit()
     flash("Status do usuário atualizado.", "ok")
     return redirect(url_for("admin_home"))
+
+# --------------------------------------------------------------- portal estático (mesmo domínio)
+_EXT_OK = {
+    ".html", ".htm", ".css", ".js", ".xml", ".txt", ".json", ".svg",
+    ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".woff", ".woff2", ".ttf",
+}
+_BLOQUEADOS = {
+    "app.py", "criar_admin.py", "schema.sql", "requirements.txt", "Procfile",
+    "render.yaml", "README.md", "LEIA-ME.md", "comunidade.db", ".gitignore",
+}
+
+def _arquivo_portal(caminho_rel):
+    caminho_rel = caminho_rel.replace("\\", "/").lstrip("/")
+    if not caminho_rel or ".." in caminho_rel.split("/"):
+        return None
+    primeiro = caminho_rel.split("/", 1)[0]
+    if primeiro in ("templates", "static", ".git", "__pycache__"):
+        return None
+    if os.path.basename(caminho_rel) in _BLOQUEADOS:
+        return None
+    full = os.path.normpath(os.path.join(BASE, caminho_rel))
+    if not full.startswith(BASE):
+        return None
+    if os.path.isdir(full):
+        full = os.path.join(full, "index.html")
+    if not os.path.isfile(full):
+        return None
+    ext = os.path.splitext(full)[1].lower()
+    if ext and ext not in _EXT_OK:
+        return None
+    return full
+
+@app.route("/")
+def portal_home():
+    return send_from_directory(BASE, "index.html")
+
+@app.route("/<path:path>")
+def portal_pages(path):
+    full = _arquivo_portal(path)
+    if not full:
+        abort(404)
+    return send_from_directory(os.path.dirname(full), os.path.basename(full))
 
 # --------------------------------------------------------------- boot
 init_db()

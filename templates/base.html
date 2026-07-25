@@ -11,8 +11,9 @@
 </head>
 <body>
 <header class="topo"><div class="container topo-in">
- <a class="logo" href="{{ url_for('comunidade_home') }}"><span class="nome"><em>in·</em>Dependência</span><span class="sub-l">comunidade</span></a>
+ <a class="logo" href="/"><span class="nome"><em>in·</em>Dependência</span><span class="sub-l">comunidade</span></a>
  <nav class="nav"><ul>
+  <li><a href="/">Site</a></li>
   <li><a href="{{ url_for('comunidade_home') }}">Fórum</a></li>
   {% if usuario %}
    <li><a href="{{ url_for('perfil') }}">Meu painel</a></li>
