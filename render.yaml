@@ -1,18 +1,6 @@
 services:
-  # Um único Web Service FREE: portal + comunidade em in-dependencia.com
-  # (o site estático sozinho não consegue rodar o fórum Flask)
   - type: web
     name: in-dependencia
-    runtime: python
-    plan: free
-    branch: main
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
-    healthCheckPath: /
-    envVars:
-      - key: PYTHON_VERSION
-        value: "3.12.8"
-      - key: SECRET_KEY
-        generateValue: true
-      - key: NUM_ZAP
-        sync: false
+    runtime: static
+    staticPublishPath: .
+    buildCommand: ""
