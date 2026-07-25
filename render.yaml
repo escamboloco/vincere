@@ -1,27 +1,16 @@
-# Blueprint gratuito — in-Dependência
-# Criar do zero: Render Dashboard → New → Blueprint → este repo → Apply
-#
-# Sobe 2 serviços FREE:
-# 1) in-dependencia            → site estático (portal)
-# 2) in-dependencia-comunidade → Flask (fórum/cadastro/admin)
-#
-# No Apply, o Render pede NUM_ZAP (WhatsApp). SECRET_KEY é gerada sozinha.
-
 services:
-  # Portal (HTML estático) — gratuito
+  # Site estático (portal)
   - type: web
     name: in-dependencia
     runtime: static
-    branch: main
-    buildCommand: "true"
     staticPublishPath: .
+    buildCommand: ""
 
-  # Comunidade (Flask) — plano free
+  # Comunidade (Flask — fórum, cadastro, admin)
   - type: web
     name: in-dependencia-comunidade
     runtime: python
     plan: free
-    branch: main
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     healthCheckPath: /
@@ -30,6 +19,5 @@ services:
         value: "3.12.8"
       - key: SECRET_KEY
         generateValue: true
-      # Preencha no Dashboard na hora do Apply (ex.: 5511999999999)
       - key: NUM_ZAP
         sync: false
