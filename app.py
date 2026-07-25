@@ -17,7 +17,7 @@ from flask import (Flask, g, request, session, redirect, url_for,
 from werkzeug.security import generate_password_hash, check_password_hash
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE, "comunidade.db")
+DB_PATH = os.environ.get("DB_PATH", os.path.join(BASE, "comunidade.db"))
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "troque-esta-chave-antes-de-publicar-" + os.urandom(8).hex())

@@ -7,7 +7,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE, "comunidade.db")
+DB_PATH = os.environ.get("DB_PATH", os.path.join(BASE, "comunidade.db"))
 
 def main():
     if len(sys.argv) != 4:
