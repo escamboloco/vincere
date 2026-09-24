@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://in-dependencia.onrender.com/sitemap.xml
+Sitemap: https://www.in-dependencia.com/sitemap.xml
