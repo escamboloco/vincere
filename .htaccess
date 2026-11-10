@@ -1,0 +1,11 @@
+# in-Dependência — Hostinger (LiteSpeed/Apache)
+Options -Indexes
+RewriteEngine On
+
+# Domínio canônico: https://www.in-dependencia.com
+RewriteCond %{HTTP_HOST} ^in-dependencia\.com$ [NC]
+RewriteRule ^ https://www.in-dependencia.com%{REQUEST_URI} [L,R=301]
+
+# Arquivos internos do repositório não são páginas do site
+RewriteRule (^|/)\.(git|claude|gitignore) - [F,L]
+RewriteRule \.(md|py|yaml)$ - [F,L]
